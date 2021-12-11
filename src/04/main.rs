@@ -59,6 +59,44 @@ impl Board {
 
 fn one(input: &Vec<String>) {
     let numbers_to_draw = input[0].split(",").map(|s| u32::from_str_radix(s, 10).unwrap()).collect::<Vec<u32>>();
+    let mut boards: Vec<Board> = get_boards(input);
+    let mut boards2: Vec<&mut Board> = boards.iter_mut().filter(|b| !b.entries.is_empty()).collect();
+    for n in numbers_to_draw {
+        for b in &mut boards2 {
+            b.mark_entry(n);
+            if b.has_bingo() {
+                let sum: u32 = b.get_unmarked_entries().iter().map(|b| b.num).sum();
+                println!("4.1: {}", sum * n);
+                return;
+            }
+        }
+    }
+}
+
+fn two(input: &Vec<String>) {
+    let numbers_to_draw = input[0].split(",").map(|s| u32::from_str_radix(s, 10).unwrap()).collect::<Vec<u32>>();
+    let mut boards: Vec<Board> = get_boards(input);
+    let mut boards2: Vec<&mut Board> = boards.iter_mut().filter(|b| !b.entries.is_empty()).collect();
+    let mut bingos = 0;
+    let board_count = boards2.len();
+    for n in numbers_to_draw {
+        for b in &mut boards2 {
+            let one_missing = board_count - 1 == bingos;
+            let bingo = b.has_bingo();
+            b.mark_entry(n);
+            if !bingo && b.has_bingo() {
+                bingos += 1;
+            }
+            if !bingo && one_missing && b.has_bingo() {
+                let sum: u32 = b.get_unmarked_entries().iter().map(|b| b.num).sum();
+                println!("4.2: {}", sum * n);
+                return;
+            }
+        }
+    }
+}
+
+fn get_boards(input: &Vec<String>) -> Vec<Board> {
     let mut boards: Vec<Board> = vec![];
     for i in 1..input.len() {
         let line = &input[i];
@@ -78,19 +116,7 @@ fn one(input: &Vec<String>) {
             }
         }
     }
-    let mut boards2: Vec<&mut Board> = boards.iter_mut().filter(|b| !b.entries.is_empty()).collect();
-    for n in numbers_to_draw {
-        for b in &mut boards2 {
-            b.mark_entry(n);
-            if b.has_bingo() {
-                let sum: u32 = b.get_unmarked_entries().iter().map(|b| b.num).sum();
-                println!("4.1: {}", sum * n);
-                return;
-            }
-        }
-    }
+    return boards;
 }
-
-fn two(input: &Vec<String>) {}
 
 
