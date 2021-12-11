@@ -41,4 +41,46 @@ fn one(input: &Vec<String>) {
     println!("3.1: {}", gamma * epsilon);
 }
 
-fn two(input: &Vec<String>) {}
+fn two(input: &Vec<String>) {
+    let max_size = input.get(0).unwrap().len();
+    let mut numbers1 = input.iter().map(|s| String::from(s)).collect::<Vec<String>>();
+    let mut numbers2 = input.iter().map(|s| String::from(s)).collect::<Vec<String>>();
+    let mut oxy = 0;
+    let mut co2 = 0;
+    for i in 0..max_size {
+        let one_count = count(&nth_string(&numbers1, i), '1');
+        let zero_count = numbers1.len() - one_count;
+        if one_count >= zero_count {
+            numbers1 = numbers1.iter().filter(|s| s.chars().nth(i).unwrap() == '1').map(|s| String::from(s)).collect();
+        } else {
+            numbers1 = numbers1.iter().filter(|s| s.chars().nth(i).unwrap() == '0').map(|s| String::from(s)).collect();
+        }
+        if numbers1.len() == 1 {
+            oxy = u32::from_str_radix(numbers1[0].as_str(), 2).unwrap();
+            break;
+        }
+    }
+    for i in 0..max_size {
+        let one_count = count(&nth_string(&numbers2, i), '1');
+        let zero_count = numbers2.len() - one_count;
+        if zero_count > one_count {
+            numbers2 = numbers2.iter().filter(|s| s.chars().nth(i).unwrap() == '1').map(|s| String::from(s)).collect();
+        } else {
+            numbers2 = numbers2.iter().filter(|s| s.chars().nth(i).unwrap() == '0').map(|s| String::from(s)).collect();
+        }
+        if numbers2.len() == 1 {
+            co2 = u32::from_str_radix(numbers2[0].as_str(), 2).unwrap();
+            break;
+        }
+    }
+    println!("3.2: {}", oxy * co2);
+}
+
+fn nth_string(input: &Vec<String>, i: usize) -> Vec<char> {
+    return input.iter().map(|s| s.chars().nth(i).unwrap()).collect::<Vec<char>>();
+}
+
+fn count(input: &Vec<char>, c: char) -> usize {
+    return input.iter().filter(|cc| **cc == c).count();
+}
+
