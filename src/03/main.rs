@@ -4,7 +4,8 @@ use std::collections::HashMap;
 mod util;
 
 fn main() {
-    let vec: Vec<String> = util::read_file("03.txt");
+    let mut vec: Vec<String> = util::read_file("03.txt");
+    vec= vec.iter().filter(|s| !s.is_empty()).map(|s| String::from(s)).collect();
     one(&vec);
     two(&vec);
 }

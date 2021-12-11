@@ -6,7 +6,6 @@ pub fn read_file(filename: &str) -> Vec<String> {
     let vec = content
         .as_str()
         .split("\n")
-        .filter(|s| !s.is_empty())
         .map(|s| String::from(s))
         .collect::<Vec<String>>();
     return vec;
