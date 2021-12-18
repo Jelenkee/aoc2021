@@ -1,10 +1,11 @@
+use std::collections::HashMap;
+
 #[path = "../util.rs"]
 mod util;
 
 fn main() {
     let mut vec: Vec<String> = util::read_file("06.txt");
     vec = vec.iter().filter(|s| !s.is_empty()).map(|s| String::from(s)).collect();
-    //vec[0]="3,4,3,1,2".to_string();
     let fishes = vec[0]
         .split(",")
         .map(|s| s.trim())
@@ -17,46 +18,51 @@ fn main() {
 
 
 fn one(fishes: &Vec<u8>) {
-    let mut copy = fishes.clone();
-    for i in 0..80 {
-        let mut new_fishes = 0_u32;
-        let mut cc = copy.clone();
-        for f in &mut cc {
-            if *f == 0u8 {
-                *f = 6;
-                new_fishes += 1;
-            } else {
-                *f -= 1;
-            }
-        }
-        copy = cc;
-        for _ in 0..new_fishes {
-            copy.push(8);
-        }
-    }
-    println!("6.1: {}", copy.len());
+    println!("6.1: {}", fishcount_after_days(fishes, 80));
 }
 
 fn two(fishes: &Vec<u8>) {
-    /*let mut copy = fishes.clone();
-    //println!("{}",usize::MAX);
-    for i in 0..256 {
-        let mut new_fishes = 0_u32;
-        let mut cc = copy.clone();
-        for f in &mut cc {
-            if *f == 0u8 {
-                *f = 6;
-                new_fishes += 1;
-            } else {
-                *f -= 1;
-            }
-        }
-        copy = cc;
-        for _ in 0..new_fishes {
-            copy.push(8);
+    println!("6.2: {}", fishcount_after_days(fishes, 256));
+}
+
+fn fishcount_after_days(fishes: &Vec<u8>, days: u16) -> usize {
+    let mut copy = fishes.clone();
+    let mut fishmap: HashMap<u8, u64> = HashMap::new();
+    for f in &mut copy {
+        let op = fishmap.get_mut(f);
+        if op.is_some() {
+            *op.unwrap() += 1;
+        } else {
+            fishmap.insert(*f, 1);
         }
     }
-    println!("6.1: {}", copy.len());*/
+    for _ in 0..days {
+        let mut new_fishes = 0_u64;
+        let mut new_fishmap: HashMap<u8, u64> = HashMap::new();
+        for k in fishmap.keys() {
+            let value = fishmap.get(k).unwrap();
+            if *k == 0u8 {
+                add_to_map(&mut new_fishmap, 6, value.clone());
+                new_fishes += value.clone();
+            } else {
+                add_to_map(&mut new_fishmap, k - 1, value.clone());
+            }
+        }
+        if new_fishes > 0 {
+            new_fishmap.insert(8, new_fishes);
+        }
+        fishmap = new_fishmap;
+    }
+    return fishmap.values().sum::<u64>() as usize;
+}
+
+fn add_to_map(map: &mut HashMap<u8, u64>, key: u8, num: u64) {
+    let op = map.get_mut(&key);
+    if op.is_some() {
+        *op.unwrap() += num;
+    } else {
+        map.insert(key, num);
+    }
 }
 
 
