@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+grid = "0.6.0"
 
 [[bin]]
 name = "03"
@@ -30,3 +31,7 @@ path = "src/07/main.rs"
 [[bin]]
 name = "08"
 path = "src/08/main.rs"
+
+[[bin]]
+name = "09"
+path = "src/09/main.rs"
